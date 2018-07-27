@@ -23,6 +23,7 @@ Route::middleware('auth:api')->group(function(){
     Route::resource('coffes','api\CoffeService');
 });
 
+Route::post('rate', 'api\CoffeService@vote');
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();

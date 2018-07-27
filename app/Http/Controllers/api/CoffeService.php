@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\api;
 
-
+use DB;
 use Illuminate\Http\Request;
 use App\Http\Controllers\api\BaseController as BaseController;
+use App\Rates;
 use App\Coffes;
 use Validator;
 
@@ -71,6 +72,31 @@ class CoffeService extends BaseController{
     public function destroy ( Coffes $coffe) {
         $coffe->delete();
         return $this->sendResponse($coffe->toArray(),'destroyed');
+    }
+
+
+    public function vote(Request $request) {
+        $input = $request->all();
+        $validator = Validator::make($input,
+        [
+            'coffe_id'=> 'required',
+            'user_id'=> 'required',
+            'value'=> 'required'
+        ]);
+        
+        if ($validator->fails()) {
+            return $this->sendError('erreur de validation',$validator->errors());
+        }
+        $id=$input['coffe_id'];
+        $coffe = DB::select('select * from coffes where id = ?',[$id] );
+        $newnbusers = $coffe[0]->nbusers+1;
+        $affected = DB::update('update coffes set nbusers = ? where id = ?', [$newnbusers,$id]);
+        
+        if($affected==1)
+        {
+            $newTotals = $coffe[0]->totalrate+$input['value'];
+            $affected = DB::update('update coffes set totalrate = ? where id = ?', [$newTotals,$id]);   
+        }
     }
 
 }
