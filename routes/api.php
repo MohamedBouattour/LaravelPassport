@@ -15,6 +15,11 @@ use Illuminate\Http\Request;
 
 Route::post('user/register', 'api\RegisterController@register');
 
+
+Route::get('coffes/get', 'api\CoffeService@index') ->name('coffe.get');
+Route::get('categorys/get', 'api\CategoryService@index') ->name('category.get');  
+
+
 Route::middleware('auth:api')->group(function(){
     Route::resource('categorys','api\CategoryService');
 });
@@ -23,7 +28,7 @@ Route::middleware('auth:api')->group(function(){
     Route::resource('coffes','api\CoffeService');
 });
 
-Route::post('rate', 'api\CoffeService@vote');
+Route::middleware('auth:api')->post('rate', 'api\CoffeService@vote');
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();

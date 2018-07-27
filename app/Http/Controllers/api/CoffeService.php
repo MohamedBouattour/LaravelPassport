@@ -95,7 +95,8 @@ class CoffeService extends BaseController{
         if($affected==1)
         {
             $newTotals = $coffe[0]->totalrate+$input['value'];
-            $affected = DB::update('update coffes set totalrate = ? where id = ?', [$newTotals,$id]);   
+            $affected = DB::update('update coffes set totalrate = ? where id = ?', [$newTotals,$id]);
+            return $this->sendResponse($coffe[0],'rated');  
         }
     }
 
